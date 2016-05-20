@@ -1,13 +1,11 @@
 package game;
 
-import cards.BaseCard;
-import enums.DuelState;
+import cards.RoyalCard;
 
 public class Player {
 	private String name;
 	private int currency;
-	private BaseCard card;
-	private DuelState currentRoundState;
+	private RoyalCard card;
 	private static int idCtr = 0;
 	private final int UID;
 	
@@ -15,13 +13,14 @@ public class Player {
 		this.name = name;
 		currency = 0;
 		UID = idCtr;
+		idCtr++;
 	}
 	
-	public void setCard(BaseCard card){
+	public void setCard(RoyalCard card){
 		this.card = card;
 	}
 
-	public BaseCard getCard() {
+	public RoyalCard getCard() {
 		return card;
 	}
 
@@ -39,14 +38,6 @@ public class Player {
 
 	public void setCurrency(int currency) {
 		this.currency = currency;
-	}
-
-	public DuelState getCurrentRoundState() {
-		return currentRoundState;
-	}
-
-	public void setCurrentRoundState(DuelState currentRoundState) {
-		this.currentRoundState = currentRoundState;
 	}
 
 	public static int getIdCtr() {

@@ -1,6 +1,6 @@
 package enums;
 public enum CardType {
 
-	ZAHL, UNTER, OBER, KOENIG, WELI
+	SEASON, ZAHL, UNTER, OBER, KOENIG, WELI
 	
 }

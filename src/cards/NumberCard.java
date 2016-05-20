@@ -3,7 +3,7 @@ package cards;
 import enums.CardSeason;
 import enums.CardType;
 
-public class NumberCard extends BaseCard{
+public class NumberCard extends RoyalCard{
 
 	private final int VALUE;
 	
