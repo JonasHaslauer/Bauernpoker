@@ -12,6 +12,7 @@ public class NumberCard extends RoyalCard{
 		VALUE = wert;
 	}
 
-	
-	
+	public int getValue() {
+		return VALUE;
+	}
 }

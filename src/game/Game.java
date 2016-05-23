@@ -1,11 +1,12 @@
 package game;
 
 import java.util.ArrayList;
-
-import cards.NumberCard;
+import java.lang.Integer;
+import cards.RoyalCard;
 import cards.SeasonCard;
 import decks.FullDeck;
 import enums.CardSeason;
+import enums.CardType;
 
 public class Game {
 	private final int MAXPLAYERS = 13;
@@ -17,17 +18,23 @@ public class Game {
 
 	public Game() {
 		players = new ArrayList<Player>();
-
 		roundCounter = 0;
 
-		players.add(new Player("Player 1"));
-		players.add(new Player("Player 2"));
-		players.add(new Player("Player 3"));
-		players.add(new Player("Player 4"));
-		players.add(new Player("Player 5"));
-		players.add(new Player("Player 6"));
-		players.add(new Player("Player 7"));
-		players.add(new Player("Player 8"));
+		/*
+		 * players.add(new Player("Player 1")); players.add(new
+		 * Player("Player 2")); players.add(new Player("Player 3"));
+		 * players.add(new Player("Player 4")); players.add(new
+		 * Player("Player 5")); players.add(new Player("Player 6"));
+		 * players.add(new Player("Player 7")); players.add(new
+		 * Player("Player 8"));
+		 */
+
+		deck = new FullDeck();
+	}
+
+	public Game(ArrayList<Player> pList) {
+		players = pList;
+		roundCounter = 0;
 
 		deck = new FullDeck();
 	}
@@ -68,8 +75,7 @@ public class Game {
 		int uid_winner = this.determineRoundWinner();
 		for (int i = 0; i < players.size(); i++) {
 			if (uid_winner == players.get(i).getUID()) {
-				System.out.println("Es hat " + players.get(i).getName()
-						+ " gewonnen!");
+				System.out.println("Es hat " + players.get(i).getName() + " gewonnen!");
 			}
 		}
 	}
@@ -112,7 +118,7 @@ public class Game {
 	 * System.out.println(" - GLEICHWERTIG"); break; } } } return 0; }
 	 */
 
-	private int determineRoundWinner() {
+	public int determineRoundWinner() {
 		ArrayList<Player> koenige = new ArrayList<Player>(), ober = new ArrayList<Player>(), unter = new ArrayList<Player>();
 		boolean weliIsInGame = false, koenigIsInGame = false, oberIsInGame = false, unterIsInGame = false;
 		int index = -1, weliIndex = -1;
@@ -147,14 +153,16 @@ public class Game {
 		if (weliIsInGame) {
 			// Weli verliert im Herbst, daher muss bevor der Rest geprüft wird,
 			// geprüft werden ob Herbst ist
-			if (currentSeason == CardSeason.HERBST)
-				;
-			else if (unterIsInGame) {
-				return unter.get(lookForHomeSeason(unter)).getUID();
+			if (currentSeason == CardSeason.HERBST) {
+			} else if (unterIsInGame) {
+				if ((index = lookForHomeSeason(unter)) != -1) {
+					return unter.get(lookForHomeSeason(unter)).getUID();
+				}
 			} else {
 				return players.get(weliIndex).getUID(); // index = WeliIndex
 			}
-		} else if (koenigIsInGame) {
+		}
+		if (koenigIsInGame) {
 			// Kein Weli im Spiel -> König zu diesem Zeitpunkt unabhängig
 			// stärkste Karte
 			if ((index = lookForHomeSeason(koenige)) != -1) {
@@ -163,21 +171,21 @@ public class Game {
 				if ((index = lookForHomeSeason(ober)) != -1) {
 					return ober.get(index).getUID();
 				}
-			} else {
-				if (koenige.size() > 1) {
-					if ((index = lookForHomeSeason(koenige)) != -1) {
-						return koenige.get(index).getUID();
-					} else {
-						/*
-						 * TODO: Stechen
-						 */
-						System.out.println("UNENTSCHIEDEN");
-					}
-				} else {
-					return koenige.get(0).getUID();
-				}
 			}
-		} else if (oberIsInGame) {
+			if (koenige.size() > 1) {
+				if ((index = lookForHomeSeason(koenige)) != -1) {
+					return koenige.get(index).getUID();
+				} else {
+					/*
+					 * TODO: Stechen
+					 */
+					stechen(koenige);
+				}
+			} else {
+				return koenige.get(0).getUID();
+			}
+		}
+		if (oberIsInGame) {
 			if (ober.size() > 1) {
 				if ((index = lookForHomeSeason(ober)) != -1) {
 					return ober.get(index).getUID();
@@ -190,7 +198,8 @@ public class Game {
 			} else {
 				return ober.get(0).getUID();
 			}
-		} else if (unterIsInGame) {
+		}
+		if (unterIsInGame) {
 			if (unter.size() > 1) {
 				if ((index = lookForHomeSeason(unter)) != -1) {
 					return unter.get(index).getUID();
@@ -211,15 +220,34 @@ public class Game {
 	/*
 	 * TODO: stechen
 	 */
-	private int stechen(Player p1, Player p2){
-		NumberCard nc_p1, nc_p2;
-		
-		nc_p1 = deck.drawNumber();
-		nc_p2 = deck.drawNumber();
-		
-		return 0;
+	private int stechen(ArrayList<Player> list) {
+		System.out.println("fag");
+		ArrayList<Integer> values = new ArrayList<Integer>();
+		ArrayList<Integer> valuesClone;
+		boolean done = false;
+		int buffer;
+
+		deck.shuffle(100);
+
+		for (int i = 0; i < list.size(); i++) {
+			values.add(deck.drawNumber().getValue());
+			System.out.println(values.get(i));
+		}
+
+		valuesClone = (ArrayList<Integer>) values.clone();
+		while (!done) {
+			for (int i = 0; i < valuesClone.size() - 1; i++) {
+				if (valuesClone.get(i) < valuesClone.get(i + 1)) {
+					buffer = valuesClone.get(i + 1);
+					//					valuesClone.get(i + 1) = (valuesClone.get(i));
+					//					valuesClone.get(i) = buffer;
+				}
+			}
+		}
+
+		return determineRoundWinner();
 	}
-	
+
 	public void debugDisplayCards() {
 		/*
 		 * DEBUG Display Cards
@@ -243,4 +271,13 @@ public class Game {
 		}
 		return -1;
 	}
+
+	public void setPlayers(ArrayList<Player> players) {
+		this.players = players;
+	}
+
+	public void setCurrentSeason(CardSeason season) {
+		currentSeason = season;
+	}
+
 }
